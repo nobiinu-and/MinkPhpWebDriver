@@ -310,7 +310,7 @@ class WebDriver extends CoreDriver
             // safaridriver not support (16611.3.10.1.6)
             $this->webDriver->manage()->deleteAllCookies();
         }
-        if ($browserName !== "chrome" || strtolower($this->desiredCapabilities->getPlatform()) !== "android") {
+        if ($this->browserName !== "chrome" || strtolower($this->desiredCapabilities->getPlatform()) !== "android") {
             // Chrome on Android not support maximizeWindow
             // TODO: resizeWindow does not accept NULL
             $this->maximizeWindow();
