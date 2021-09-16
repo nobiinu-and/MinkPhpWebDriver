@@ -306,7 +306,10 @@ class WebDriver extends CoreDriver
      */
     public function reset()
     {
-        $this->webDriver->manage()->deleteAllCookies();
+        if ($this->browserName !== 'safari') {
+            // safaridriver not support (16611.3.10.1.6)
+            $this->webDriver->manage()->deleteAllCookies();
+        }
         // TODO: resizeWindow does not accept NULL
         $this->maximizeWindow();
         // reset timeout
@@ -697,7 +700,12 @@ class WebDriver extends CoreDriver
             $value = str_repeat(Keys::BACKSPACE . Keys::DELETE, $existingValueLength) . $value;
         }
 
-        $element->sendKeys($value);
+        if ($this->browserName == "safari" && strtolower($this->desiredCapabilities->getPlatform()) == "ios") {
+            // issue with safaridriver
+            $this->executeJsOnXPath($xpath, "{{ELEMENT}}.value = '${value}'");
+        } else {
+            $element->sendKeys($value);
+        }
 
         // Trigger a change event.
         $script = <<<EOF
@@ -849,6 +857,9 @@ EOF;
 
                 throw $e;
             }
+        } else if ($this->browserName === 'safari') {
+            // An issue with safaridriver
+            $this->executeJsOnElement($element, '{{ELEMENT}}.click()');
         } else {
             $element->click();
         }
