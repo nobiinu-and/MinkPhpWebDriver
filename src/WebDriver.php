@@ -307,8 +307,11 @@ class WebDriver extends CoreDriver
     public function reset()
     {
         $this->webDriver->manage()->deleteAllCookies();
-        // TODO: resizeWindow does not accept NULL
-        $this->maximizeWindow();
+        if ($browserName !== "chrome" || strtolower($this->desiredCapabilities->getPlatform()) !== "android") {
+            // Chrome on Android not support maximizeWindow
+            // TODO: resizeWindow does not accept NULL
+            $this->maximizeWindow();
+        }
         // reset timeout
         $this->timeouts = [];
     }
