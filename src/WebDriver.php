@@ -824,10 +824,11 @@ EOF;
 
     private function clickOnElement(WebDriverElement $element)
     {
-        if ($this->browserName === 'firefox') {
+        if ($this->browserName === 'firefox' || $this->browserName === 'chrome') {
             // TODO: Raise a bug against geckodrvier.
             // Firefox does not move cursor over an element in breach of https://w3c.github.io/webdriver/#element-click
             // section 8.Otherwise.
+            // Add: Chrome has same issue
             $this->scrollElementIntoViewIfRequired($element);
             $this->mouseOverElement($element);
         }
