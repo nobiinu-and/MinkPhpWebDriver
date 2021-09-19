@@ -519,6 +519,11 @@ class WebDriver extends CoreDriver
         $element = $this->findElement($xpath);
         $text = $element->getText();
 
+        if ($this->browserName === 'safari') { // issue with safaridriver
+            $text = (string) preg_replace("/^\s\s+|\s\s+$/", '', $text);
+            $text = (string) preg_replace("/\s\s+/", ' ', $text);
+        }
+
         $text = (string) str_replace(array("\r", "\r\n", "\n"), ' ', $text);
 
         return $text;
