@@ -701,17 +701,18 @@ class WebDriver extends CoreDriver
 
         $value = (string) $value;
 
-        if (in_array($elementName, array('input', 'textarea'))) {
-            $existingValueLength = strlen($element->getAttribute('value'));
-            // Add the TAB key to ensure we unfocus the field as browsers are triggering the change event only
-            // after leaving the field.
-            $value = str_repeat(Keys::BACKSPACE . Keys::DELETE, $existingValueLength) . $value;
-        }
-
         if ($this->browserName == "safari" && strtolower($this->desiredCapabilities->getPlatform()) == "ios") {
             // issue with safaridriver
-            $this->executeJsOnXPath($xpath, "{{ELEMENT}}.value = '${value}'");
+            $value = mb_ereg_replace('\r\n|\n|\r', '\\n', $value);
+            $this->executeJsOnXPath($xpath, "return {{ELEMENT}}.value = '${value}'");
         } else {
+            if (in_array($elementName, array('input', 'textarea'))) {
+                $existingValueLength = strlen($element->getAttribute('value'));
+                // Add the TAB key to ensure we unfocus the field as browsers are triggering the change event only
+                // after leaving the field.
+                $value = str_repeat(Keys::BACKSPACE . Keys::DELETE, $existingValueLength) . $value;
+            }
+    
             $element->sendKeys($value);
         }
 
